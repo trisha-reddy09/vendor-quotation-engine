@@ -1,12 +1,16 @@
 import os
+from dotenv import load_dotenv
 import psycopg
 
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:YOUR_PASSWORD@localhost:5432/vendor_quotation_db"
-)
+load_dotenv()
+
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def get_connection():
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL is not configured")
+
     return psycopg.connect(DATABASE_URL)
