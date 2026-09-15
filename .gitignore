@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / generated files
+dist/
+build/
+coverage/
+*.log
+
+# Python test/cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local history
+.history/
