@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.routes.vendors import router as vendor_router
+from app.routes import vendors, quotes
 
 
 app = FastAPI(
@@ -14,3 +15,6 @@ def health_check():
 
 
 app.include_router(vendor_router)
+
+app.include_router(vendors.router)
+app.include_router(quotes.router)   
