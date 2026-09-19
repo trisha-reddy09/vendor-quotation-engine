@@ -1,0 +1,21 @@
+{
+  "source_file": "rfq_002.json",
+  "received_on": "2026-03-18",
+  "vendor": {
+    "name": "XYZ Systems",
+    "email": "quotes@xyzsystems.example.com",
+    "gst": "27XYZAB5678C1Z9"
+  },
+  "quotation": {
+    "quote_no": " Q-102 ",
+    "quote_date": "2026/03/18",
+    "total": "INR 95000.50",
+    "payment_terms": "50% advance, balance on delivery",
+    "lead_time": "10 working days",
+    "validity": "2 months"
+  },
+  "items": [
+    { "description": "Control module", "qty": "5", "rate": "19,000.10" }
+  ]
+}
+
