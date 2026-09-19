@@ -1,0 +1,21 @@
+{
+  "source_file": "rfq_003.json",
+  "received_on": "2026-03-20",
+  "vendor": {
+    "name": "Nova Industrial Supplies",
+    "email": "info@novasupplies.example.com",
+    "gst": "29NOVAB9012D1Z3"
+  },
+  "quotation": {
+    "quote_no": "Q/103",
+    "quote_date": "March 20, 2026",
+    "total": "2,45,000",
+    "payment_terms": "Immediate",
+    "lead_time": "approx 1 month",
+    "validity": ""
+  },
+  "items": [
+    { "description": "Hydraulic pump", "qty": "2 units", "rate": "1,10,000" },
+    { "description": "Installation service", "qty": "1", "rate": "25,000" }
+  ]
+}
