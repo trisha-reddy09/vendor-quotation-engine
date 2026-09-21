@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import psycopg
-from psycopg.rows import dict_row
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -19,10 +18,7 @@ if not DATABASE_URL:
 
 def get_connection():
     """Raw psycopg3 connection, used by the vendor and quote read code."""
-    return psycopg.connect(
-        DATABASE_URL.replace("+psycopg", ""),
-        row_factory=dict_row,
-    )
+    return psycopg.connect(DATABASE_URL.replace("+psycopg", ""))
 
 
 engine = create_engine(DATABASE_URL)
