@@ -28,3 +28,24 @@
 | POST | `/quotes/` | Create quote |
 | PUT | `/quotes/{quote_id}` | Update quote |
 | DELETE | `/quotes/{quote_id}` | Delete quote |
+
+## 7. RFQ endpoints (Days 16 and 17)
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/rfq/files` | List available RFQ files |
+| POST | `/rfq/files/{name}/import` | Import one RFQ file |
+| POST | `/rfq/import-all` | Import all available RFQ files |
+
+### Import behavior
+
+The RFQ import endpoints support vendor matching and optional vendor creation.
+
+| Case | Behavior |
+|---|---|
+| Vendor matches an existing vendor | RFQ is imported using the matched vendor |
+| Vendor does not match and `create_vendor=false` | Import is refused |
+| Vendor does not match and `create_vendor=true` | A new vendor can be created |
+| Invalid or unsupported RFQ data | Import is refused with an appropriate error |
+
+The `create_vendor` option is disabled by default.

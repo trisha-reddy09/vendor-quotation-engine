@@ -52,3 +52,23 @@ Examples:
 - Use clear and meaningful names.
 - Test changes before pushing.
 - Keep documentation updated when necessary.
+
+## Database access
+
+All endpoints use the SQLAlchemy session dependency:
+
+```python
+def my_endpoint(db: Session = Depends(get_db)):
+```
+
+Raw `get_connection()` is being phased out. Do not add new code that uses it.
+
+Every write endpoint must call `db.commit()` - without it the change is rolled back silently when the request ends.
+
+The project uses psycopg3. DATABASE_URL must begin with:
+
+```text
+postgresql+psycopg://
+```
+
+so SQLAlchemy loads the correct driver.
