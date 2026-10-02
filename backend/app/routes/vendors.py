@@ -1,12 +1,30 @@
 from fastapi import APIRouter
 from app.database import get_connection
-from fastapi import APIRouter, HTTPException
 from app.schemas import VendorCreate
+from app.errors import not_found, conflict
+
 
 router = APIRouter(
     prefix="/vendors",
     tags=["Vendors"]
 )
+
+
+def _vendor_name_taken(conn, vendor_name: str, ignore_vendor_id: int = None) -> bool:
+    """
+    Check whether a vendor with the same name already exists.
+    The comparison is case-insensitive.
+    """
+    sql = "SELECT 1 FROM vendors WHERE LOWER(vendor_name) = %s"
+    params = [vendor_name.lower()]
+
+    if ignore_vendor_id is not None:
+        sql += " AND id <> %s"
+        params.append(ignore_vendor_id)
+
+    with conn.cursor() as cur:
+        cur.execute(sql, tuple(params))
+        return cur.fetchone() is not None
 
 
 @router.get("/")
@@ -38,7 +56,8 @@ def get_vendors():
         }
         for row in rows
     ]
-  
+
+
 @router.get("/{vendor_id}")
 def get_vendor(vendor_id: int):
     with get_connection() as conn:
@@ -58,10 +77,7 @@ def get_vendor(vendor_id: int):
             row = cur.fetchone()
 
     if row is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Vendor not found"
-        )
+        raise not_found("Vendor", vendor_id)
 
     return {
         "id": row[0],
@@ -70,12 +86,20 @@ def get_vendor(vendor_id: int):
         "phone": row[3],
         "address": row[4],
         "gst_number": row[5]
-    }  
+    }
 
 
 @router.post("/")
 def create_vendor(vendor: VendorCreate):
+
     with get_connection() as conn:
+
+        # Check for duplicate vendor name
+        if _vendor_name_taken(conn, vendor.vendor_name):
+            raise conflict(
+                f"A vendor named '{vendor.vendor_name}' already exists"
+            )
+
         with conn.cursor() as cur:
             cur.execute("""
                 INSERT INTO vendors
@@ -107,14 +131,16 @@ def create_vendor(vendor: VendorCreate):
         "phone": row[3],
         "address": row[4],
         "gst_number": row[5]
-    }    
+    }
 
 
 @router.put("/{vendor_id}")
 def update_vendor(vendor_id: int, vendor: VendorCreate):
-    with get_connection() as conn:
-        with conn.cursor() as cur:
 
+    with get_connection() as conn:
+
+        # Check whether vendor exists
+        with conn.cursor() as cur:
             cur.execute(
                 "SELECT id FROM vendors WHERE id = %s",
                 (vendor_id,)
@@ -122,12 +148,20 @@ def update_vendor(vendor_id: int, vendor: VendorCreate):
 
             existing = cur.fetchone()
 
-            if existing is None:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Vendor not found"
-                )
+        if existing is None:
+            raise not_found("Vendor", vendor_id)
 
+        # Check for duplicate vendor name
+        if _vendor_name_taken(
+            conn,
+            vendor.vendor_name,
+            ignore_vendor_id=vendor_id
+        ):
+            raise conflict(
+                f"A vendor named '{vendor.vendor_name}' already exists"
+            )
+
+        with conn.cursor() as cur:
             cur.execute("""
                 UPDATE vendors
                 SET
@@ -166,11 +200,13 @@ def update_vendor(vendor_id: int, vendor: VendorCreate):
         "gst_number": row[5]
     }
 
+
 @router.delete("/{vendor_id}")
 def delete_vendor(vendor_id: int):
-    with get_connection() as conn:
-        with conn.cursor() as cur:
 
+    with get_connection() as conn:
+
+        with conn.cursor() as cur:
             cur.execute(
                 "SELECT id FROM vendors WHERE id = %s",
                 (vendor_id,)
@@ -178,12 +214,10 @@ def delete_vendor(vendor_id: int):
 
             existing = cur.fetchone()
 
-            if existing is None:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Vendor not found"
-                )
+        if existing is None:
+            raise not_found("Vendor", vendor_id)
 
+        with conn.cursor() as cur:
             cur.execute(
                 "DELETE FROM vendors WHERE id = %s RETURNING id",
                 (vendor_id,)
@@ -196,4 +230,4 @@ def delete_vendor(vendor_id: int):
     return {
         "message": "Vendor deleted successfully",
         "id": deleted_id
-    }        
+    }
