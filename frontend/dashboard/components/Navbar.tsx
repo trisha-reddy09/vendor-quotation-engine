@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const links = [
   { href: "/", label: "Dashboard" },
@@ -10,6 +10,8 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <nav className="w-56 min-h-screen bg-slate-900 text-white p-4">
       <h2 className="text-lg font-bold mb-6">Quotation Engine</h2>
@@ -27,6 +29,16 @@ export default function Navbar() {
           </li>
         ))}
       </ul>
+
+      <button
+        onClick={() => {
+          localStorage.removeItem("loggedIn");
+          router.replace("/login");
+        }}
+        className="mt-8 w-full rounded px-3 py-2 text-left bg-red-600 hover:bg-red-700"
+      >
+        Logout
+      </button>
     </nav>
   );
 }
