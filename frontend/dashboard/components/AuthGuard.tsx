@@ -1,15 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+export default function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [allowed, setAllowed] = useState(false);
+
+  const loggedIn = useSyncExternalStore(
+    subscribe,
+    () => localStorage.getItem("loggedIn") === "true", // value in the browser
+    () => false // value while the server renders
+  );
 
   useEffect(() => {
-    if (localStorage.getItem("loggedIn") === "true") setAllowed(true);
-    else router.replace("/login");
-  }, [router]);
+    if (!loggedIn) router.replace("/login");
+  }, [loggedIn, router]);
 
-  return allowed ? <>{children}</> : null;
+  return loggedIn ? <>{children}</> : null;
 }
