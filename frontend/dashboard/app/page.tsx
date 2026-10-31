@@ -1,4 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
+import { vendors, quotes } from "../src/data/mockData";
+import { formatRupees } from "../src/lib/formatters";
 
 export default function Home() {
   return (
@@ -64,6 +67,52 @@ export default function Home() {
           </a>
         </div>
       </main>
+      
+<section className="w-full bg-slate-50 p-6 text-slate-800">
+  <h2 className="mb-6 text-2xl font-bold">Dashboard Overview</h2>
+
+  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="rounded-xl border border-indigo-200 bg-white p-5 shadow-sm">
+      <p className="text-sm font-semibold text-indigo-700">Total Vendors</p>
+      <h3 className="mt-3 text-2xl font-bold">{vendors.length}</h3>
+      <p className="mt-2 text-xs text-slate-500">Registered vendors</p>
+    </div>
+
+    <div className="rounded-xl border border-blue-200 bg-white p-5 shadow-sm">
+      <p className="text-sm font-semibold text-blue-700">Total Quotes</p>
+      <h3 className="mt-3 text-2xl font-bold">{quotes.length}</h3>
+      <p className="mt-2 text-xs text-slate-500">Quotations received</p>
+    </div>
+
+    <div className="rounded-xl border border-emerald-200 bg-white p-5 shadow-sm">
+      <p className="text-sm font-semibold text-emerald-700">Lowest Quote</p>
+      <h3 className="mt-3 text-2xl font-bold">
+        {quotes.length ? formatRupees(Math.min(...quotes.map(q => q.total_amount))) : "-"}
+      </h3>
+      <p className="mt-2 text-xs text-slate-500">Most affordable quotation</p>
+    </div>
+
+    <div className="rounded-xl border border-teal-200 bg-white p-5 shadow-sm">
+      <p className="text-sm font-semibold text-teal-700">Average Lead Time</p>
+      <h3 className="mt-3 text-2xl font-bold">
+        {quotes.length
+          ? (quotes.reduce((total, q) => total + q.lead_time_days, 0) / quotes.length).toFixed(1) + " days"
+          : "-"}
+      </h3>
+      <p className="mt-2 text-xs text-slate-500">Average delivery time</p>
+    </div>
+  </div>
+
+  <div className="mt-8 flex flex-wrap gap-4">
+    <Link href="/vendors" className="rounded-lg bg-indigo-700 px-5 py-3 text-white">
+      View Vendors
+    </Link>
+    <Link href="/quote-comparison" className="rounded-lg bg-teal-700 px-5 py-3 text-white">
+      Compare Quotes
+    </Link>
+  </div>
+</section>
+
     </div>
   );
 }
