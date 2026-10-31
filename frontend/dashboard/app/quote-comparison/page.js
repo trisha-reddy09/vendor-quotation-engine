@@ -2,8 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import { quotes, vendors } from "../../data/mockData";
-import { formatRupees } from "../../lib/formatters";
+import { quotes, vendors } from "../../src/data/mockData";
+import { formatRupees } from "../../src/lib/formatters";
 
 const PAYMENT_TERMS = ["Net-30", "Net-45", "Advance"];
 
